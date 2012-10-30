@@ -32,22 +32,22 @@ public class KeeperTest {
     }
 
 
-//    @Test
-//    public void getOne() throws SQLException {
-//        ADVehicle ad = k.one("select * from ADVehicle where Number = 8434211", ADVehicle.class);
-//        assertNotNull(ad);
-//        assertEquals("8434211",ad.setId());
-//
-//        Offer o = k.one("select * from Offer where Number = 8377383", Offer.class);
-//        assertNotNull(o);
-//        assertEquals(8377383,o.getNumber());
-//    }
-//
-//    @Test
-//    public void getList() throws SQLException {
-//        List<Offer> list = k.list("select top 10 * from Offer", Offer.class);
-//        assertEquals(10,list.size());
-//    }
+    @Test
+    public void getOne() throws SQLException {
+        ADVehicle ad = k.one("select * from ADVehicle where Number = 8434211", ADVehicle.class);
+        assertNotNull(ad);
+        assertEquals("8434211",ad.setId());
+
+        Offer o = k.one("select * from Offer where Number = 8377383", Offer.class);
+        assertNotNull(o);
+        assertEquals(8377383,o.getNumber());
+    }
+
+    @Test
+    public void getList() throws SQLException {
+        List<Offer> list = k.list("select top 10 * from Offer", Offer.class);
+        assertEquals(10,list.size());
+    }
 
     @Test
     public void insert() throws SQLException {
