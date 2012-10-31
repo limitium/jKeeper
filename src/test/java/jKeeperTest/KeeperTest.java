@@ -7,8 +7,11 @@ import jKeeperTest.model.ADVehicle;
 import jKeeperTest.model.Offer;
 import org.junit.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -19,10 +22,20 @@ public class KeeperTest {
 
     @Before
     public void setUp() {
+        Properties prop;
+        prop = new Properties();
+        InputStream in = KeeperTest.class.getResourceAsStream("db.properties");
+        try {
+            prop.load(in);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         SQLServerDataSource ds = new SQLServerDataSource();
-        ds.setURL("jdbc:sqlserver://mercury.db.autovista.eu:1433;databasename=ENS;selectmethod=cursor");
-        ds.setUser("ens_test");
-        ds.setPassword("sne_test");
+        ds.setURL("jdbc:sqlserver://"+prop.getProperty("dburl")+":1433;databasename="+prop.getProperty("dbname")+";selectmethod=cursor");
+        ds.setUser(prop.getProperty("dbuser"));
+        ds.setPassword(prop.getProperty("dbpassword"));
 
         k = new Keeper(ds);
     }
