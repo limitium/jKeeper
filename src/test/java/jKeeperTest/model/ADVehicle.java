@@ -143,6 +143,7 @@ public class ADVehicle implements Cloneable {
     private float EmissionTax;
     @Id
     @Column("Number")
+    @Type(ColumnType.INT)
     private String Id;
     private String ADTypeList;
     private String modelYear;

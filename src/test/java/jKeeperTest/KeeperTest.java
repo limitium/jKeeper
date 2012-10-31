@@ -3,8 +3,10 @@ package jKeeperTest;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import jKeeper.Keeper;
+import jKeeper.bean.BeanParser;
 import jKeeperTest.model.ADVehicle;
 import jKeeperTest.model.Offer;
+import jKeeperTest.model.Ololo;
 import org.junit.*;
 
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class KeeperTest {
         }
 
         SQLServerDataSource ds = new SQLServerDataSource();
-        ds.setURL("jdbc:sqlserver://"+prop.getProperty("dburl")+":1433;databasename="+prop.getProperty("dbname")+";selectmethod=cursor");
+        ds.setURL("jdbc:sqlserver://" + prop.getProperty("dburl") + ":1433;databasename=" + prop.getProperty("dbname") + ";selectmethod=cursor");
         ds.setUser(prop.getProperty("dbuser"));
         ds.setPassword(prop.getProperty("dbpassword"));
 
@@ -49,17 +51,17 @@ public class KeeperTest {
     public void getOne() throws SQLException {
         ADVehicle ad = k.one("select * from ADVehicle where Number = 8434211", ADVehicle.class);
         assertNotNull(ad);
-        assertEquals("8434211",ad.setId());
+        assertEquals("8434211", ad.setId());
 
         Offer o = k.one("select * from Offer where Number = 8377383", Offer.class);
         assertNotNull(o);
-        assertEquals(8377383,o.getNumber());
+        assertEquals(8377383, o.getNumber());
     }
 
     @Test
     public void getList() throws SQLException {
         List<Offer> list = k.list("select top 10 * from Offer", Offer.class);
-        assertEquals(10,list.size());
+        assertEquals(10, list.size());
     }
 
     @Test

@@ -1,6 +1,8 @@
 package jKeeper.bean;
 
 
+import jKeeper.annotation.ColumnType;
+
 public class BeanProp {
     private String fieldName;
     private String columnName;
@@ -11,6 +13,10 @@ public class BeanProp {
     private Class type;
     private boolean skipped;
     private boolean id;
+
+
+
+    private ColumnType columnType;
 
     public BeanProp(String fieldName) {
         this.fieldName = fieldName;
@@ -73,5 +79,13 @@ public class BeanProp {
 
     public void setColumnName(String columnName) {
         this.columnName = columnName;
+    }
+
+    public void setColumnType(ColumnType columnType) {
+        this.columnType = columnType;
+    }
+
+    public ColumnType getColumnType() {
+        return columnType;
     }
 }
