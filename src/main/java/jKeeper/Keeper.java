@@ -1,8 +1,9 @@
 package jKeeper;
 
-import jKeeper.bean.BeanProp;
 import jKeeper.bean.BeanParser;
+import jKeeper.bean.BeanProp;
 import jKeeper.db.DbParser;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +15,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 public class Keeper {
     private static final Logger logger = LoggerFactory.getLogger(Keeper.class);
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public Keeper(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
 
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
@@ -76,6 +76,11 @@ public class Keeper {
         close(rst);
     }
 
+    public static void close(Connection conn, Statement st) {
+        close(conn);
+        close(st);
+    }
+
     public static void close(Connection conn, Statement pst, ResultSet rst) {
         close(conn);
         close(pst);
@@ -124,7 +129,7 @@ public class Keeper {
         return list;
     }
 
-    public int insert(Object ad) throws SQLException {
+    public boolean insert(Object ad) throws SQLException {
         Class type = ad.getClass();
         HashMap<String, BeanProp> props = getBeanParser(type).getProps();
         List<String> columns = new ArrayList<String>();
@@ -134,13 +139,13 @@ public class Keeper {
             if (!prop.isSkipped() && !prop.isId()) {
                 columns.add(prop.getColumnName());
                 try {
-                    Method getter = type.getDeclaredMethod(prop.getGetter());
                     if (!firstVal) {
                         values += ",";
                     }
-                    boolean withBrace = true;
-                    values += "'" + getter.invoke(ad) + "'";
                     firstVal = false;
+
+                    Method getter = type.getDeclaredMethod(prop.getGetter());
+                    values += getValue(prop, getter.invoke(ad));
                 } catch (NoSuchMethodException e) {
                     logger.error(e.getMessage());
                     throw new SQLException(
@@ -157,8 +162,32 @@ public class Keeper {
             }
         }
         String sql = "INSERT INTO " + getBeanParser(type).getTable() + " ([" + StringUtils.join(columns, "],[") + "]) values (" + values + ")";
-        System.out.println(sql);
-        return getConnection().prepareStatement(sql).executeUpdate();
+        return getConnection().prepareStatement(sql).execute();
+    }
+
+    private String getValue(BeanProp prop, Object val) {
+        boolean withBrace;
+
+        switch (prop.getColumnType()) {
+            case INT:
+                withBrace = false;
+            case VARCHAR:
+            case DATE:
+            case DATETIME:
+                withBrace = true;
+            default:
+                withBrace = true;
+        }
+
+        String sqlVal;
+        if (val == null) {
+            withBrace = false;
+            sqlVal = "NULL";
+        } else {
+            sqlVal = val.toString();
+        }
+
+        return (withBrace ? "'" : "") + sqlVal + (withBrace ? "'" : "");
     }
 
     private BeanParser getBeanParser(Class type) {
@@ -213,4 +242,16 @@ public class Keeper {
         }
     }
 
+    public boolean execute(String sql) throws SQLException {
+        Connection connection = this.getConnection();
+        Statement st = connection.createStatement();
+        try {
+            return st.execute(sql);
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        } finally {
+            close(connection, st);
+        }
+        return false;
+    }
 }

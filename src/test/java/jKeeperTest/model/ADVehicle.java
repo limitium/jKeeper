@@ -36,8 +36,11 @@ public class ADVehicle implements Cloneable {
     private String Colour;
     private String MediaColour;
     private String Power;
+    @Type(ColumnType.INT)
     private String CylVolume;
+    @Type(ColumnType.INT)
     private String NetWeight;
+    @Type(ColumnType.INT)
     private String GrossWeight;
     private String InsuranceComp;
     private String MOTDate;
@@ -83,59 +86,82 @@ public class ADVehicle implements Cloneable {
     private String ChassisType;
     private String City;
     private String CityCode;
+    @Type(ColumnType.INT)
     private String CoPilots;
     private String Country;
     @Skip
     private String importCountryCode;
     @Skip
     private String importCountryName;
+    @Type(ColumnType.INT)
     private String CurbWeight;
     private String DieselTaxNotPaidCode;
+    @Type(ColumnType.INT)
     private String EmissionCode;
     private String ExtraColour;
     private String InsCompany;
     private String InsCompanyCode;
     private String InTrafficDate;
     private String IsRegistered;
+    @Type(ColumnType.INT)
     private String Length;
     private String LowEmission;
+    @Type(ColumnType.INT)
     private String Luggage;
     private String AKEMake;
+    @Type(ColumnType.INT)
     private String ManGrossWeight;
+    @Type(ColumnType.INT)
     private String MaxWeight;
     private String AKEModel;
     private String Mortgage;
+    @Type(ColumnType.INT)
     private String MOTYear;
     private String OptionsWithCode;
     private String Owner2;
+    @Type(ColumnType.INT)
     private String Passengers;
+    @Type(ColumnType.INT)
     private String RoofWeight;
     private String SafetyEquipment;
     private String TankCapacity;
+    @Type(ColumnType.INT)
     private String TowWeightWithBrakes;
     private String Turbo;
     private String Tyres;
+    @Type(ColumnType.INT)
     private String Usage;
     private String VehicleType;
+    @Type(ColumnType.INT)
     private String Width;
     private String ADMake;
     private String ADModel;
     private String ADType;
+    @Type(ColumnType.INT)
     private String TyId;
     private String PriceDate;
+    @Type(ColumnType.INT)
     private String FirstYear;
+    @Type(ColumnType.INT)
     private String LastYear;
+    @Type(ColumnType.INT)
     private String Speed;
     private String Accel;
     private String ADPower;
+    @Type(ColumnType.INT)
     private String CylDisplacement;
     private String FuelCons1;
     private String FuelCons2;
     private String FuelCons4;
+    @Type(ColumnType.INT)
     private String Doors;
+    @Type(ColumnType.INT)
     private String AskPrice;
+    @Type(ColumnType.INT)
     private String SalePrice;
+    @Type(ColumnType.INT)
     private String PurchasePrice;
+    @Type(ColumnType.INT)
     private String NewPrice;
     private String QueryDate;
     private String CO2;
@@ -146,6 +172,7 @@ public class ADVehicle implements Cloneable {
     @Type(ColumnType.INT)
     private String Id;
     private String ADTypeList;
+    @Type(ColumnType.INT)
     private String modelYear;
     private String GroupId;
     @Skip

@@ -52,9 +52,6 @@ public class BeanProp {
         return fieldName;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
 
     public Class getType() {
         return type;

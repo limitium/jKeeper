@@ -3,11 +3,11 @@ package jKeeperTest;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import jKeeper.Keeper;
-import jKeeper.bean.BeanParser;
 import jKeeperTest.model.ADVehicle;
 import jKeeperTest.model.Offer;
-import jKeeperTest.model.Ololo;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +17,6 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class KeeperTest {
     private Keeper k;
@@ -66,10 +65,14 @@ public class KeeperTest {
 
     @Test
     public void insert() throws SQLException {
+        k.execute("delete from ADVehicle where regnumber='keeper'");
+
         ADVehicle ad = new ADVehicle();
         ad.setId(null);
         ad.setRegNumber("keeper");
-        assertEquals(1, k.insert(ad));
+        k.insert(ad);
+
+        assertEquals(1, k.list("select * from ADVehicle where regnumber='keeper'", ADVehicle.class).size());
     }
 
 }
