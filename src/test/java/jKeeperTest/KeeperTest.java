@@ -75,4 +75,25 @@ public class KeeperTest {
         assertEquals(1, k.list("select * from ADVehicle where regnumber='keeper'", ADVehicle.class).size());
     }
 
+    @Test
+    public void update() throws SQLException {
+        k.execute("delete from ADVehicle where regnumber='keeper'");
+
+        ADVehicle ad = new ADVehicle();
+        ad.setId(null);
+        ad.setRegNumber("keeper");
+        ad.setADMake("audi");
+
+        k.insert(ad);
+
+        ADVehicle savedAd = k.one("select * from ADVehicle where regnumber='keeper'", ADVehicle.class);
+        assertEquals("audi", savedAd.getADMake());
+
+        savedAd.setADMake("bmw");
+
+        k.update(savedAd);
+
+        ADVehicle updatedVehicle = k.one("select * from ADVehicle where number=" + savedAd.getId(), ADVehicle.class);
+        assertEquals("bmw", updatedVehicle.getADMake());
+    }
 }

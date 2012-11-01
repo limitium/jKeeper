@@ -92,7 +92,15 @@ public class Keeper {
         close(pst);
     }
 
-
+    /**
+     * Retrieve single object
+     *
+     * @param sql
+     * @param type
+     * @param <T>
+     * @return
+     * @throws SQLException
+     */
     public <T> T one(String sql, Class<T> type) throws SQLException {
         Connection connection = this.getConnection();
         Statement st = connection.createStatement();
@@ -110,6 +118,15 @@ public class Keeper {
         return bean;
     }
 
+    /**
+     * Retrieve  list of objects
+     *
+     * @param sql
+     * @param type
+     * @param <T>
+     * @return
+     * @throws SQLException
+     */
     public <T> List<T> list(String sql, Class<T> type) throws SQLException {
         ArrayList<T> list = new ArrayList<T>();
         Connection connection = this.getConnection();
@@ -129,8 +146,15 @@ public class Keeper {
         return list;
     }
 
-    public boolean insert(Object ad) throws SQLException {
-        Class type = ad.getClass();
+    /**
+     * Insert object to db
+     *
+     * @param obj
+     * @return
+     * @throws SQLException
+     */
+    public boolean insert(Object obj) throws SQLException {
+        Class type = obj.getClass();
         HashMap<String, BeanProp> props = getBeanParser(type).getProps();
         List<String> columns = new ArrayList<String>();
         String values = "";
@@ -145,7 +169,7 @@ public class Keeper {
                     firstVal = false;
 
                     Method getter = type.getDeclaredMethod(prop.getGetter());
-                    values += getValue(prop, getter.invoke(ad));
+                    values += getValue(prop, getter.invoke(obj));
                 } catch (NoSuchMethodException e) {
                     logger.error(e.getMessage());
                     throw new SQLException(
@@ -162,7 +186,70 @@ public class Keeper {
             }
         }
         String sql = "INSERT INTO " + getBeanParser(type).getTable() + " ([" + StringUtils.join(columns, "],[") + "]) values (" + values + ")";
-        return getConnection().prepareStatement(sql).execute();
+        return execute(sql);
+    }
+
+    /**
+     * Update object in db
+     *
+     * @param obj
+     * @return
+     * @throws SQLException
+     */
+    public boolean update(Object obj) throws SQLException {
+        Class type = obj.getClass();
+        HashMap<String, BeanProp> props = getBeanParser(type).getProps();
+        List<String> updates = new ArrayList<String>();
+        String idCol = "";
+        String idVal = "";
+        for (BeanProp prop : props.values()) {
+            if (!prop.isSkipped()) {
+                try {
+                    Method getter = type.getDeclaredMethod(prop.getGetter());
+                    String value = getValue(prop, getter.invoke(obj));
+                    if (prop.isId()) {
+                        idCol = prop.getColumnName();
+                        idVal = value;
+                    } else {
+                        updates.add(prop.getColumnName() + "=" + value);
+                    }
+                } catch (NoSuchMethodException e) {
+                    logger.error(e.getMessage());
+                    throw new SQLException(
+                            "Getter not found " + prop.getGetter() + ": " + e.getLocalizedMessage());
+                } catch (InvocationTargetException e) {
+                    logger.error(e.getMessage());
+                    throw new SQLException(
+                            "Cant invoke getter" + prop.getGetter() + ": " + e.getLocalizedMessage());
+                } catch (IllegalAccessException e) {
+                    logger.error(e.getMessage());
+                    throw new SQLException(
+                            "Cant access getter" + prop.getGetter() + ": " + e.getLocalizedMessage());
+                }
+            }
+        }
+        String sql = "UPDATE " + getBeanParser(type).getTable() + " SET " + StringUtils.join(updates, ",") + " WHERE " + idCol + "=" + idVal;
+        return execute(sql);
+    }
+
+    /**
+     * Execute free sql query
+     *
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    public boolean execute(String sql) throws SQLException {
+        Connection connection = this.getConnection();
+        Statement st = connection.createStatement();
+        try {
+            return st.execute(sql);
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        } finally {
+            close(connection, st);
+        }
+        return false;
     }
 
     private String getValue(BeanProp prop, Object val) {
@@ -242,16 +329,4 @@ public class Keeper {
         }
     }
 
-    public boolean execute(String sql) throws SQLException {
-        Connection connection = this.getConnection();
-        Statement st = connection.createStatement();
-        try {
-            return st.execute(sql);
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        } finally {
-            close(connection, st);
-        }
-        return false;
-    }
 }
