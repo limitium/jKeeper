@@ -13,7 +13,6 @@
 
     <properties>
         <project.url>dav:https://github.com/limitium/jKeeper/</project.url>
-        <slf4j.version>1.6.4</slf4j.version>
         <java.source.version>1.6</java.source.version>
         <java.target.version>1.6</java.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,10 +40,8 @@
 
     <developers>
         <developer>
-            <name>Yegor Andreenko</name>
-            <email>yegor.andreenko@constant.obninsk.ru</email>
-            <organization>Constant</organization>
-            <organizationUrl>http://www.constant.obninsk.ru/</organizationUrl>
+            <name>limitium</name>
+            <email>limitium@gmail.com</email>
         </developer>
     </developers>
 
@@ -83,12 +80,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
+            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
+            <version>1.6.4</version>
         </dependency>
 
 
@@ -168,12 +165,18 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
+
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.2</version>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <warSourceExcludes>src/main/resources/*</warSourceExcludes>
+                    <!--<archive>-->
+                    <!--<manifest>-->
+                    <!--<mainClass>eu.autovista.vis.features.document.ITextConverter</mainClass>-->
+                    <!--</manifest>-->
+                    <!--</archive>-->
+                    <descriptorRefs>
+                        <descriptorRef></descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>

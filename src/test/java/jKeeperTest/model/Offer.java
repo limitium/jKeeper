@@ -11,7 +11,9 @@ package jKeeperTest.model;
  */
 
 
+import jKeeper.annotation.ColumnType;
 import jKeeper.annotation.Setter;
+import jKeeper.annotation.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class Offer implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(Offer.class);
-    
+
     // basic
     private int number; // automatically assigned number
     private String companyId; // dealership presenting the offer

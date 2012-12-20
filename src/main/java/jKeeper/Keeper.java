@@ -97,18 +97,30 @@ public class Keeper {
      *
      * @param sql
      * @param type
-     * @param <T>
      * @return
      * @throws SQLException
      */
     public <T> T one(String sql, Class<T> type) throws SQLException {
+        return one(sql, type, null);
+    }
+
+    /**
+     * Retrieve single object
+     *
+     * @param sql
+     * @param type
+     * @param columnMapper
+     * @return
+     * @throws SQLException
+     */
+    public <T> T one(String sql, Class<T> type, HashMap<String, String> columnMapper) throws SQLException {
         Connection connection = this.getConnection();
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery(sql);
         T bean = null;
         try {
             rs.next();
-            bean = this.createBean(type, rs, DbParser.getColumns(rs.getMetaData(), getBeanParser(type).getProps()));
+            bean = this.createBean(type, rs, DbParser.getColumns(rs.getMetaData(), getBeanParser(type).getProps(columnMapper)));
         } catch (SQLException e) {
             logger.error(e.getMessage());
             throw new SQLException(e.getMessage());
@@ -128,12 +140,25 @@ public class Keeper {
      * @throws SQLException
      */
     public <T> List<T> list(String sql, Class<T> type) throws SQLException {
+        return list(sql, type, null);
+    }
+
+    /**
+     * Retrieve  list of objects
+     *
+     * @param sql
+     * @param type
+     * @param columnMapper
+     * @return
+     * @throws SQLException
+     */
+    public <T> List<T> list(String sql, Class<T> type, HashMap<String, String> columnMapper) throws SQLException {
         ArrayList<T> list = new ArrayList<T>();
         Connection connection = this.getConnection();
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery(sql);
         try {
-            HashMap<String, BeanProp> cols = DbParser.getColumns(rs.getMetaData(), getBeanParser(type).getProps());
+            HashMap<String, BeanProp> cols = DbParser.getColumns(rs.getMetaData(), getBeanParser(type).getProps(columnMapper));
             while (rs.next()) {
                 list.add(this.createBean(type, rs, cols));
             }
@@ -246,10 +271,10 @@ public class Keeper {
             return st.execute(sql);
         } catch (SQLException e) {
             logger.error(e.getMessage());
+            throw new SQLException(e.getMessage());
         } finally {
             close(connection, st);
         }
-        return false;
     }
 
     private String getValue(BeanProp prop, Object val) {

@@ -17,6 +17,10 @@ public class BeanParser {
     }
 
     public <T> HashMap<String, BeanProp> getProps() {
+        return getProps(null);
+    }
+
+    public <T> HashMap<String, BeanProp> getProps(HashMap<String, String> columnMapper) {
         HashMap<String, BeanProp> props = new HashMap<String, BeanProp>();
         for (Field f : type.getDeclaredFields()) {
 
@@ -49,6 +53,10 @@ public class BeanParser {
                 if (a.annotationType() == Type.class) {
                     beanProp.setColumnType(((Type) a).value());
                 }
+            }
+
+            if (columnMapper != null && columnMapper.containsKey(f.getName())) {
+                beanProp.setColumnName(columnMapper.get(f.getName()));
             }
             props.put(f.getName(), beanProp);
         }
