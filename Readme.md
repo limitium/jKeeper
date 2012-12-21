@@ -34,14 +34,13 @@ ADVehicle ad = k.one("select CompanyId,RegNumber as rg_id,RegCode as rg,Number f
     
 ##Custom data processing
 ```java
-StringBuffer data = new StringBuffer("");
+final StringBuffer data = new StringBuffer("");
 new Command(k, "SELECT TOP 1000 * FROM VISLog  where OperationId='keeper'") {
   @Override //Call for each row in ResultSet
   public void work(ResultSet rs) throws SQLException {
-      ((StringBuffer) get("data")).append(rs.getString("OperationId"));
+      data.append(rs.getString("OperationId"));
   }
-}
-      .put("data", data)
+}      
       .execute();
 
 System.out.println(data); //>>>keeperkeeperkeeperkeeper
