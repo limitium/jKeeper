@@ -119,8 +119,9 @@ public class Keeper {
         ResultSet rs = st.executeQuery(sql);
         T bean = null;
         try {
-            rs.next();
-            bean = this.createBean(type, rs, DbParser.getColumns(rs.getMetaData(), getBeanParser(type).getProps(columnMapper)));
+            if (rs.next()) {
+                bean = this.createBean(type, rs, DbParser.getColumns(rs.getMetaData(), getBeanParser(type).getProps(columnMapper)));
+            }
         } catch (SQLException e) {
             logger.error(e.getMessage());
             throw new SQLException(e.getMessage());
